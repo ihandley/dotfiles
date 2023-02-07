@@ -58,7 +58,7 @@ alias dsa="docker ps -q | awk '{print $1}' | xargs -o docker stop"
 alias k="kubectl"
 alias kctx="k config use-context"
 alias kns="k config set-context --current --namespace"
-alias klog="f() {k logs -f $(k get pods -n midigator-portfolios | fgrep $1 | awk '{print $1}')};f"
+# alias klog="f() { k logs -f $(k get pods -n midigator-portfolios | fgrep $1 | awk '{print $1}'); }"
 
 # networking
 alias ports='netstat -tulanp'

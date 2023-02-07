@@ -32,8 +32,3 @@ kube_prompt() {
    kubectl_prompt="k8s:($kubectl_project|$kubectl_cluster)"
    echo $kubectl_prompt
 }
-
-# You need kube-ps1 to set the prompt.
-# brew install kube-ps1
-source /usr/local/opt/kube-ps1/share/kube-ps1.sh
-PROMPT='$(kube_ps1)'$PROMPT

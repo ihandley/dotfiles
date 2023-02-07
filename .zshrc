@@ -2,7 +2,7 @@
 source ~/.oh-my-zsh/oh-my-zsh.sh
 ZSH_THEME="powerlevel10k/powerlevel10k"
 CASE_SENSITIVE="true"
-plugins=(git)
+plugins=(git kubectl kube-ps1)
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
@@ -30,3 +30,5 @@ for file in ~/.zshrc.d/**/*.zshrc
 do
   source "$file"
 done
+
+[[ -s "/Users/ianhandley/.gvm/scripts/gvm" ]] && source "/Users/ianhandley/.gvm/scripts/gvm"
