@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+MY_PATH="$(dirname -- "${BASH_SOURCE[0]}")"
 
-ln -s .zshrc.d ~
-ln -s .zshrc ~
+rm -rf ~/.zshrc.d
+ln -s $MY_PATH/.zshrc.d ~
+
+rm ~/.zshrc
+ln -s $MY_PATH/.zshrc ~
