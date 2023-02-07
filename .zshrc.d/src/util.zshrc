@@ -24,3 +24,16 @@ extr ()
     echo "'$1' is not a valid file"
   fi
 }
+
+kube_prompt() {
+   kubectl_current_context=$(kubectl config current-context)
+   kubectl_project=$(echo $kubectl_current_context | cut -d '_' -f 2)
+   kubectl_cluster=$(echo $kubectl_current_context | cut -d '_' -f 4)
+   kubectl_prompt="k8s:($kubectl_project|$kubectl_cluster)"
+   echo $kubectl_prompt
+}
+
+# You need kube-ps1 to set the prompt.
+# brew install kube-ps1
+source /usr/local/opt/kube-ps1/share/kube-ps1.sh
+PROMPT='$(kube_ps1)'$PROMPT

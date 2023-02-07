@@ -56,6 +56,8 @@ alias dsa="docker ps -q | awk '{print $1}' | xargs -o docker stop"
 
 # kubernetes
 alias k="kubectl"
+alias kctx="k config use-context"
+alias kns="k config set-context --current --namespace"
 
 # networking
 alias ports='netstat -tulanp'
