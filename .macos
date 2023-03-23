@@ -21,29 +21,55 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
 echo "Hello $(whoami)! Let's get you set up."
 
-echo "mkdir -p ${HOME}/code"
-mkdir -p "${HOME}/code"
+# echo "mkdir -p ${HOME}/code"
+# mkdir -p "${HOME}/code"
 
-echo "installing homebrew"
+# echo "installing homebrew"
 # install homebrew https://brew.sh
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+# /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> /Users/kentcdodds/.zprofile
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> /Users/ianhandley/.zprofile
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
+echo "updating brew"
+brew update
+
+
 echo "brew installing stuff"
+# antigen: plugin manager for zsh, inspired by oh-my-zsh and vundle
+# bat: a cat(1) clone with syntax highlighting and Git integration.
+# coreutils: GNU File, Shell, and Text utilities
+# curl: get a file from an HTTP, HTTPS or FTP server
+# eslint: AST-based pattern checker for JavaScript
+# fontforge: command-line outline and bitmap font editor/converter
+# git: well... git
+# git-delta: a syntax-highlighting pager for git, diff, and grep output
 # hub: a github-specific version of git
-# libdvdcss: makes handbreak capable of ripping DVDs
-# ripgrep: rg is faster than alternatives
-# imagemagick: eventually I will need this for something
-# ffmpeg: eventually I'll need this for something
-# tree: really handy for listing out directories in text
-# bat: A cat(1) clone with syntax highlighting and Git integration.
-# delta: A fantastic diff tool
-# switchaudio-osx: allows me to switch the audio device via the command line
+# micro: modern and intuitive terminal-based text editor
+# openssl: cryptography and SSL/TLS Toolkit
 # pgcli: postgres CLI
-brew install git hub libdvdcss ripgrep imagemagick watchman tree bat \
-git-delta switchaudio-osx pgcli ffmpeg
+# pyenv: python version management
+# readline: library for command-line editing
+# ripgrep: rg is faster than alternatives
+# ruby: powerful, clean, object-oriented scripting language
+# sqlite3: command-line interface for SQLite
+# tcl-tk: tool Command Language
+# tree: really handy for listing out directories in text
+# watchman: a file watching service
+# xz: general-purpose data compression with high compression ratio
+# yarn: javaScript package manager
+# zlib: general-purpose lossless data-compression library
+
+brew install antigen bat coreutils eslint fontforge git git-delta hub micro openssl@3 pgcli pyenv readline ripgrep \
+ruby sqlite tcl-tk tree watchman xz yarn zlib
+
+echo 'setting up pyenv and python
+echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc
+echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
+echo 'eval "$(pyenv init -)"' >> ~/.zshrc
+# exec "$SHELL"
+pyenv install $(pyenv latest -k 3)
+pyenv global $(pyenv latest -k 3)
 
 echo "installing node (via n-install)"
 curl -L https://git.io/n-install | bash
@@ -56,15 +82,43 @@ npm install --global serve fkill-cli npm-quick-run \
 semantic-release-cli npm-check-updates
 
 echo "installing apps with brew --cask"
-brew install --cask alfred google-chrome firefox brave-browser bettertouchtool divvy \
-bartender itsycal visual-studio-code 1password dash screenflow skype workflowy \
-sublime-text vlc discord obs handbrake zoom betterzip avibrazil-rdm sip \
-qlcolorcode qlmarkdown qlstephen quicklook-json webpquicklook \
-suspicious-package qlvideo spotify focus dropbox front slack openaudible \
-todoist audacity docker another-redis-desktop-manager loopback kid3
+# alfred: application launcher and productivity software
+# avibrazil-rdm: tool that lets you use MacBook Pro Retina's highest and unsupported resolutions
+# bartender: menu bar icon organizer
+# bettertouchtool: tool to customize input devices and automate computer systems
+# betterzip: utility to create and modify archives
+# brave-browser: web browser focusing on privacy
+# dash: POSIX-compliant descendant of NetBSD's ash (the Almquist SHell)
+# divvy: application window manager focusing on simplicity
+# docker: pack, ship and run any application as a lightweight container
+# exa: modern replacement for 'ls'
+# firefox: browser
+# itsycal: menu bar calendar
+# openaudible: audiobook manager for Audible users
+# qlcolorcode: quickLook plug-in that renders source code with syntax highlighting
+# qlmarkdown: quickLook generator for Markdown files
+# qlstephen: quickLook plugin for plaintext files without an extension
+# quicklook-json: quickLook plugin for JSON files
+# sip: tool to create Python bindings for C and C++ libraries
+# suspicious-package: application for inspecting installer packages
+# todoist: to-do list
+# visual-studio-code: open-source code editor
+# webpquicklook: quickLook plugin for WebP files
+# workflowy: notetaking tool
 
-echo "Generating a new SSH key for GitHub"
-ssh-keygen -t ed25519 -C "me+github@kentcdodds.com" -f ~/.ssh/id_ed25519
+brew install --cask alfred avibrazil-rdm bartender bettertouchtool betterzip brave-browser dash divvy docker exa \
+firefox itsycal openaudible qlcolorcode qlmarkdown qlstephen quicklook-json sip suspicious-package todoist \
+visual-studio-code webpquicklook workflowy
+
+#echo "doing font stuff"
+#fontforge -script font-patcher PATH_TO_FONT
+
+echo "installing colorls"
+gem install colorls
+echo 'source $(dirname $(gem which colorls))/tab_complete.sh' >> ~/.zshrc
+
+echo "generating a new SSH key for GitHub"
+ssh-keygen -t ed25519 -C "ianhandley@gmail.com" -f ~/.ssh/id_ed25519
 eval "$(ssh-agent -s)"
 touch ~/.ssh/config
 echo "Host *\n AddKeysToAgent yes\n UseKeychain yes\n IdentityFile ~/.ssh/id_ed25519" | tee ~/.ssh/config
@@ -325,7 +379,7 @@ defaults write com.apple.finder ShowMountedServersOnDesktop -bool false
 defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool true
 
 # Finder: show hidden files by default
-#defaults write com.apple.finder AppleShowAllFiles -bool true
+defaults write com.apple.finder AppleShowAllFiles -bool true
 
 # Finder: show all filename extensions
 defaults write NSGlobalDomain AppleShowAllExtensions -bool true
@@ -507,17 +561,17 @@ defaults write com.apple.dock showLaunchpadGestureEnabled -int 0
 # 12: Notification Center
 # 1048576 is ⌘ I think
 # Top left screen corner → Desktop
-defaults write com.apple.dock wvous-tl-corner -int 4
-defaults write com.apple.dock wvous-tl-modifier -int 1048576
+# defaults write com.apple.dock wvous-tl-corner -int 4
+# defaults write com.apple.dock wvous-tl-modifier -int 1048576
 # Top right screen corner → Desktop
-defaults write com.apple.dock wvous-tr-corner -int 4
-defaults write com.apple.dock wvous-tr-modifier -int 1048576
+# defaults write com.apple.dock wvous-tr-corner -int 4
+# defaults write com.apple.dock wvous-tr-modifier -int 1048576
 # Bottom left screen corner → Start screen saver
-defaults write com.apple.dock wvous-bl-corner -int 5
-defaults write com.apple.dock wvous-bl-modifier -int 1048576
+# defaults write com.apple.dock wvous-bl-corner -int 5
+# defaults write com.apple.dock wvous-bl-modifier -int 1048576
 # Bottom right screen corner → Put display to sleep
-defaults write com.apple.dock wvous-br-corner -int 10
-defaults write com.apple.dock wvous-br-modifier -int 1048576
+# defaults write com.apple.dock wvous-br-corner -int 10
+# defaults write com.apple.dock wvous-br-modifier -int 1048576
 
 ###############################################################################
 # Safari & WebKit                                                             #
