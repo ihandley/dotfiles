@@ -1,3 +1,4 @@
+
 #!/usr/bin/env bash
 
 # ~/.macos — https://mths.be/macos
@@ -99,6 +100,7 @@ echo "installing apps with brew --cask"
 # qlmarkdown: quickLook generator for Markdown files
 # qlstephen: quickLook plugin for plaintext files without an extension
 # quicklook-json: quickLook plugin for JSON files
+# runcat-plugins-manager: enable RunCat to show the CPU temperature
 # sip: tool to create Python bindings for C and C++ libraries
 # suspicious-package: application for inspecting installer packages
 # todoist: to-do list
@@ -107,7 +109,7 @@ echo "installing apps with brew --cask"
 # workflowy: notetaking tool
 
 brew install --cask alfred avibrazil-rdm bartender bettertouchtool betterzip brave-browser dash divvy docker exa \
-firefox itsycal openaudible qlcolorcode qlmarkdown qlstephen quicklook-json sip suspicious-package todoist \
+firefox itsycal openaudible qlcolorcode qlmarkdown qlstephen quicklook-json runcat-plugins-manager sip suspicious-package todoist \
 visual-studio-code webpquicklook workflowy
 
 #echo "doing font stuff"
@@ -313,8 +315,8 @@ defaults write com.apple.universalaccess HIDScrollZoomModifierMask -int 262144
 defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 
 # Set a blazingly fast keyboard repeat rate
-defaults write NSGlobalDomain KeyRepeat -int 1
-defaults write NSGlobalDomain InitialKeyRepeat -int 10
+defaults write NSGlobalDomain KeyRepeat -int 0.02
+defaults write NSGlobalDomain InitialKeyRepeat -int 12
 
 # Set language and text formats
 # Note: if you’re in the US, replace `EUR` with `USD`, `Centimeters` with

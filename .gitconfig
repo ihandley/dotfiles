@@ -1,6 +1,6 @@
 [user]
-  name = Ian Handley
-  email = ianhandley@gmail.com
+	name = Ian Handley
+	email = ian.h@midigator.com
 
 [pull]
   rebase = true
@@ -22,6 +22,7 @@
 [core]
   pager = delta --theme="night-owlish"
 	excludesfile = /Users/ihandley/.gitignore_global
+	autocrlf = input
 [interactive]
     diffFilter = delta --color-only
 [color]
