@@ -1,103 +1,136 @@
-# If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
+export TERM=xterm-256color
+export CLICOLOR=1
+export LSCOLORS=Fafacxdxbxegedabagacad
 
-# Path to your oh-my-zsh installation.
-export ZSH=~/.oh-my-zsh
+# Prompt colors
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+RESET=$(tput sgr0)
 
-# Set name of the theme to load. Optionally, if you set this to "random"
-# it'll load a random theme each time that oh-my-zsh is loaded.
-# See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-# ZSH_THEME="robbyrussell"
-ZSH_THEME="steeef"
+# Prompt with full path and git branch
+precmd() {
+  local branch=$(git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ \1/')
+  PS1="${YELLOW}%~${GREEN}${branch}${RESET} "$'\n'"$ "
+}
 
-# Uncomment the following line to use case-sensitive completion.
-# CASE_SENSITIVE="true"
+# History
+HISTSIZE=5000
+SAVEHIST=10000
+HISTFILE=${ZDOTDIR:-$HOME}/.zsh_history
+setopt EXTENDED_HISTORY
+setopt SHARE_HISTORY
+setopt APPEND_HISTORY
+setopt INC_APPEND_HISTORY
+setopt HIST_IGNORE_DUPS
 
-# Uncomment the following line to use hyphen-insensitive completion. Case
-# sensitive completion must be off. _ and - will be interchangeable.
-# HYPHEN_INSENSITIVE="true"
+# Better history search with arrows
+bindkey '^[[A' history-search-backward
+bindkey '^[[B' history-search-forward
 
-# Uncomment the following line to disable bi-weekly auto-update checks.
-# DISABLE_AUTO_UPDATE="true"
+export VISUAL="vim"
+export EDITOR="vim"
+export SRC_DIR=$HOME/src
 
-# Uncomment the following line to change how often to auto-update (in days).
-# export UPDATE_ZSH_DAYS=13
+# Homebrew
+brew_path="/opt/homebrew/bin"
+PATH="${brew_path}:$HOME/bin:$HOME/.docker/bin:$PATH"
 
-# Uncomment the following line to disable colors in ls.
-# DISABLE_LS_COLORS="true"
+# Direnv (skip if not installed)
+if command -v direnv &> /dev/null; then
+  eval "$(direnv hook zsh)"
+fi
 
-# Uncomment the following line to disable auto-setting terminal title.
-# DISABLE_AUTO_TITLE="true"
+# Ripgrep config (only if file exists)
+[[ -f $HOME/.ripgreprc ]] && export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
 
-# Uncomment the following line to enable command auto-correction.
-# ENABLE_CORRECTION="true"
+# Lazy-load Go
+load_go() {
+  if ! command -v go &> /dev/null; then
+    unset -f go
+    return
+  fi
+  export GOPATH=${SRC_DIR}/go
+  export GOROOT="$(brew --prefix golang 2>/dev/null)/libexec"
+  export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
+  unset -f go
+}
 
-# Uncomment the following line to display red dots whilst waiting for completion.
-# COMPLETION_WAITING_DOTS="true"
+# Lazy-load Java
+load_java() {
+  if ! command -v java &> /dev/null; then
+    unset -f java
+    return
+  fi
+  export PATH="$JAVA_HOME/bin:$PATH"
+  unset -f java
+}
 
-# Uncomment the following line if you want to disable marking untracked files
-# under VCS as dirty. This makes repository status check for large repositories
-# much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
+# OpenCode
+export OPENCODE_CONFIG_DIR="$HOME/code/github/opencode"
+export OPENCODE_CONFIG="${OPENCODE_CONFIG_DIR}/opencode.json"
+export JOB_COACH_DB="${HOME}/.local/share/opencode/job-coach/jobs.db"
 
-# Uncomment the following line if you want to change the command execution time
-# stamp shown in the history command output.
-# The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
-# HIST_STAMPS="mm/dd/yyyy"
+# Aliases
+alias l="eza --icons -la"
+alias tree="eza --tree"
+alias gitra="git rm -rf --cached . && git add ."
+alias tf="terraform"
+alias c='noglob code --'
 
-# Would you like to use another custom folder than $ZSH/custom?
-# ZSH_CUSTOM=/path/to/new-custom-folder
+# Custom functions
+function quit {
+  if [[ -z "$1" ]]; then
+    echo "Usage: quit appname"
+  else
+    for appname in $1; do
+      osascript -e "quit app \"$appname\""
+    done
+  fi
+}
 
-# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+# Manconomy GitHub token (stored in macOS Keychain)
 
-source $ZSH/oh-my-zsh.sh
+# NVM (Node Version Manager)
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && . "/opt/homebrew/opt/nvm/nvm.sh"
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && . "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
 
-# User configuration
+# Completion system
+fpath=(/opt/homebrew/share/zsh-completions $fpath)
 
-# export MANPATH="/usr/local/man:$MANPATH"
+autoload -Uz compinit
 
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
+if [[ -n "$(compaudit 2>/dev/null)" ]]; then
+  compaudit | xargs chmod g-w,o-w
+fi
 
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
+compinit
 
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
-
-# ssh
-# export SSH_KEY_PATH="~/.ssh/dsa_id"
-
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
-source ~/.commonrc
-
-# disable auto window rename in tmux
-export DISABLE_AUTO_TITLE="true"
-
-# pure prompt for zsh `sindresorhus/pure`
-# works better with `sindresorhus/iterm2-snazzy`
-ZSH_THEME=""
-autoload -U promptinit; promptinit
-# PURE_PROMPT_SYMBOL="▷"
-PURE_PROMPT_SYMBOL="$"
-prompt pure
-
+# FZF
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border"
+export FZF_CTRL_R_OPTS="--sort --exact"
 
-# added by travis gem
-[ -f /Users/haishan/.travis/travis.sh ] && source /Users/haishan/.travis/travis.sh
+# Autosuggestions
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+bindkey '^ ' autosuggest-accept
+
+# Syntax highlighting must stay last
+source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+
+get_github_token() {
+  security find-generic-password \
+    -a "$USER" \
+    -s "github-manconomy-token" \
+    -w 2>/dev/null
+}
+
+
+# pnpm
+export PNPM_HOME="/Users/ianhandley/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME/bin:"*) ;;
+  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
+esac
+# pnpm end
